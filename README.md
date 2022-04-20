@@ -7,7 +7,7 @@ https://github.com/lauralardies/trabajofinal
 El tema que hemos elegido son los campamentos de salud "MedCamp". La dirección del dataset que hemos elegio desde Kaggle es la siguiente: [Kaggle](https://www.kaggle.com/datasets/shivan118/healthcare-analytics)
 https://www.kaggle.com/datasets/shivan118/healthcare-analytics
 
-MedCamp es una empresa que organiza campamentos de salud para aquellos que no tienen un buen equilibrio entre su vida de trabajo y su vida personal. Con el objetivo de mejorar su dalud, estos usuarios se dan de alta en MedCamp y acuden al campamento voluntariamente. Nuestro dataset contiene toda la información de este campamento en los últimos 4 años, durante los cuales se han realizado 65 eventos. Hay que tener en cuenta que hay 3 formatos de campamentos. En los dos primeros el usuario obtiene un puntuaje de salud, mientras que en el tercero aporta información sobre problemas de salud del usuario.
+MedCamp es una empresa que organiza campamentos de salud para aquellos que no tienen un buen equilibrio entre su vida de trabajo y su vida personal. Con el objetivo de mejorar su salud, estos usuarios se dan de alta en MedCamp y acuden al campamento voluntariamente. Nuestro dataset contiene toda la información de este campamento en los últimos 4 años, durante los cuales se han realizado 65 eventos. Hay que tener en cuenta que hay 3 formatos de campamentos. En los dos primeros el usuario obtiene un puntuaje de salud, mientras que en el tercero aporta información sobre problemas de salud del usuario.
 
 El dataset elegido contiene 6 archivos csv:
 - Health Camp Detail.csv: contiene el ID del campamento de salud de cada persona, la fecha de inicio, la fecha de finalización y los detalles de cada categoría de cada campamento.
