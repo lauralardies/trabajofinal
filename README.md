@@ -27,17 +27,17 @@ Para esta fase hemos diseñado un prototipo de nuestra página web en figma, en 
 
 - Primero hemos creado un mapa de sitio, que nos indica a dónde nos dirige cada botón de la página web. Se podría decir que es un esquema de la página web. El enlace al figma de nuestro mapa de sitio es el siguiente: 
 
-[Figma](https://www.figma.com/file/h0sWHzjpBhrmVRIngSsqdk/trabajo-final?node-id=54%3A156)
-https://www.figma.com/file/h0sWHzjpBhrmVRIngSsqdk/trabajo-final?node-id=54%3A156
+ [Figma](https://www.figma.com/file/h0sWHzjpBhrmVRIngSsqdk/trabajo-final?node-id=54%3A156)
+ https://www.figma.com/file/h0sWHzjpBhrmVRIngSsqdk/trabajo-final?node-id=54%3A156
 
 - Seguidamente hemos determinado qué fuente y qué colores van ha ser empleados en nuestra página web. Esta decisión se conoce como wireframe. El enlace de figma al wireframe que hemos creado es el siguiente: 
 
-[Figma](https://www.figma.com/file/h0sWHzjpBhrmVRIngSsqdk/trabajo-final?node-id=54%3A157)
-https://www.figma.com/file/h0sWHzjpBhrmVRIngSsqdk/trabajo-final?node-id=54%3A157
+ [Figma](https://www.figma.com/file/h0sWHzjpBhrmVRIngSsqdk/trabajo-final?node-id=54%3A157)
+ https://www.figma.com/file/h0sWHzjpBhrmVRIngSsqdk/trabajo-final?node-id=54%3A157
 
 - A partir de estos dos proyectos hemos desarrollado nuestro prototipo de página web. En el siguiente enlace de figma se puede ver nuestro prototipo:
- 
-[Figma](https://www.figma.com/proto/h0sWHzjpBhrmVRIngSsqdk/trabajo-final?node-id=0%3A1&scaling=scale-down&page-id=0%3A1&starting-point-node-id=2%3A2)
-https://www.figma.com/proto/h0sWHzjpBhrmVRIngSsqdk/trabajo-final?node-id=0%3A1&scaling=scale-down&page-id=0%3A1&starting-point-node-id=2%3A2
+
+ [Figma](https://www.figma.com/proto/h0sWHzjpBhrmVRIngSsqdk/trabajo-final?node-id=0%3A1&scaling=scale-down&page-id=0%3A1&starting-point-node-id=2%3A2)
+ https://www.figma.com/proto/h0sWHzjpBhrmVRIngSsqdk/trabajo-final?node-id=0%3A1&scaling=scale-down&page-id=0%3A1&starting-point-node-id=2%3A2
 
 ## FASE 2
