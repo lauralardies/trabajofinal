@@ -23,5 +23,15 @@ Por lo tanto, nuestro trabajo consistirá en estudiar los datos de las personas 
 El motivo por el que hemos elegido este tema es porque nos parece una buena iniciativa para concienciar a la sociedad de la importancia de la salud.
 
 ## FASE 1
+Para esta fase hemos diseñado un prototipo de nuestra página web en figma, en donde los usuarios obtienen la información de nuestra compañía y pueden registrarse y apuntarse al campamento. Para desarrollar nuestro prototipo hemos seguido varios pasos:
+
+- Primero hemos creado un mapa del sitio, que nos indica a dónde nos dirige cada botón de la página web. El enlace al figma de nuestro mapa del sitio es el siguiente: [Figma](https://www.figma.com/file/h0sWHzjpBhrmVRIngSsqdk/trabajo-final?node-id=54%3A156)
+https://www.figma.com/file/h0sWHzjpBhrmVRIngSsqdk/trabajo-final?node-id=54%3A156
+
+- Seguidamente hemos decidido la fuente y los colores que vamos a emplear en nuestra página web, esto se conoce como wireframe. El enlace de figma al wireframe que hemos creado es el siguiente: [Figma](https://www.figma.com/file/h0sWHzjpBhrmVRIngSsqdk/trabajo-final?node-id=54%3A157)
+https://www.figma.com/file/h0sWHzjpBhrmVRIngSsqdk/trabajo-final?node-id=54%3A157
+
+- A partir de estos dos proyectos hemos desarrollado nuestro prototipo de página web. En el siguiente enlace de figma se puede ver nuestro prototipo: [Figma](https://www.figma.com/proto/h0sWHzjpBhrmVRIngSsqdk/trabajo-final?node-id=0%3A1&scaling=scale-down&page-id=0%3A1&starting-point-node-id=2%3A2)
+https://www.figma.com/proto/h0sWHzjpBhrmVRIngSsqdk/trabajo-final?node-id=0%3A1&scaling=scale-down&page-id=0%3A1&starting-point-node-id=2%3A2
 
 ## FASE 2
