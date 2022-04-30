@@ -53,3 +53,22 @@ plt.ylim(0, (max(m, l, t, f)*1.5)) # Determinamos a nuestro gusto el límite del
 plt.ylabel("Número de pacientes") # Título que explica los datos del eje Y.
 plt.title("Relación Paciente - Redes Sociales") # Título de la gráfica.
 plt.show() # Comando que muestra la gráfica.
+
+# Creamos un diccionario de las ciudades de los pacientes.
+
+ciudades = {}
+for paciente in pacientes:
+    if paciente["Tipo_Ciudad"] not in ciudades:
+        ciudades[paciente["Tipo_Ciudad"]] = 1
+    else:
+        ciudades[paciente["Tipo_Ciudad"]] = ciudades[paciente["Tipo_Ciudad"]] + 1
+
+del ciudades[""] # Eliminamos aquellos casos en los que no esté especificada la ciudad del paciente.
+
+# Pintamos gráfica de barras de las ciudades en relación con los pacientes.
+
+plt.bar(ciudades.keys(), ciudades.values()) # La información que aparecerá en los ejes.
+plt.xlabel("Tipos de Ciudades") # Título que explica los datos del eje X.
+plt.ylabel("Número de pacientes") # Título que explica los datos del eje Y.
+plt.title("Relación Paciente - Ciudad") # Título de la gráfica.
+plt.show()
