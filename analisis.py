@@ -1,9 +1,13 @@
+import matplotlib.pyplot as plt
+
+# Primero analizamos el fichero y creamos una lista de diccionarios.
+
 try:
     f = open("healthcare-analytics\Train\Patient_Profile.csv")
 
 except FileNotFoundError:
     print("El fichero no existe.")
-    
+
 else:
     lineas = f.readlines()
     f.close()
@@ -22,4 +26,30 @@ else:
                     paciente[traduccion[columnas[i]]] = campos[i]
             pacientes.append(paciente)
 
-    print(pacientes)
+# Ahora analizamos los datos ordenados.
+
+n = len(pacientes) # Número de pacientes en total.
+
+m = 0 # Número de pacientes que siguen online a MedCamp.
+l = 0 # Número de pacientes que siguen en LinkedIn a MedCamp.
+t = 0 # Número de pacientes que siguen en Twitter a Medcamp.
+f = 0 # Número de pacientes que siguen en Facebook a Medcamp.
+
+for paciente in pacientes:
+    if paciente["Seguidor_Online"] != "0":
+        m = m + 1
+    if paciente["Comparte_LinkedIn"] != "0":
+        l = l + 1
+    if paciente["Comparte_Twitter"] != "0":
+        t = t + 1
+    if paciente["Comparte_Facebook"] != "0":
+        f = f + 1
+
+# Vamos a realizar una gráfica de barras con los datos analizados hasta ahora.
+
+plt.bar(["Seguidor\n Online", "Comparte en\n LinkedIn", "Comparte en\n Twitter", "Comparte en\n Facebook"], [m, l, t, f]) # La información que aparecerá en los ejes.
+plt.xlabel("Actividad en las redes sociales") # Título que explica los datos del eje X.
+plt.ylim(0, (max(m, l, t, f)*1.5)) # Determinamos a nuestro gusto el límite del eje Y.
+plt.ylabel("Número de pacientes") # Título que explica los datos del eje Y.
+plt.title("Relación Paciente - Redes Sociales") # Título de la gráfica.
+plt.show() # Comando que muestra la gráfica.
