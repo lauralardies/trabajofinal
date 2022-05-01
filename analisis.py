@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 # Primero analizamos el fichero y creamos una lista de diccionarios.
 
 try:
-    f = open("healthcare-analytics\Train\Patient_Profile.csv")
+    f = open("health-care analytics\Train\Patient_Profile.csv")
 
 except FileNotFoundError:
     print("El fichero no existe.")
@@ -20,27 +20,25 @@ else:
     pacientes = []
 
     for linea in lineas[1:]:
-        if linea or any(linea) or any(field.strip() for field in linea):            
-            paciente = {}
-            linea = linea.strip()
-            campos = linea.split(",")
-            for i in range(len(columnas)):
-                if columnas[i] in seleccion:
-                    paciente[traduccion[columnas[i]]] = campos[i]
-                pacientes.append(paciente)
+        paciente = {}
+        linea = linea.strip()
+        campos = linea.split(",")
+        for i in range(len(columnas)):
+            if columnas[i] in seleccion:
+                paciente[traduccion[columnas[i]]] = campos[i]
+        pacientes.append(paciente)
 
     # Ahora analizamos los datos ordenados.
 
     n = len(pacientes) # Número de pacientes en total.
 
-    print ("Numero de pacientes:" + str(n))
     m = 0 # Número de pacientes que siguen online a MedCamp.
     l = 0 # Número de pacientes que siguen en LinkedIn a MedCamp.
     t = 0 # Número de pacientes que siguen en Twitter a Medcamp.
     f = 0 # Número de pacientes que siguen en Facebook a Medcamp.
     ciudades = {} # Diccionario de las ciudades con el número de pacientes que vive en cada una de ellas.
     trabajo = {} # Diccionario de los trabajos con el número de pacientes que se dedican a ello.
-    
+
     for paciente in pacientes:
         # Análisis del seguimiento en redes sociales.
         if paciente["Seguidor_Online"] != "0":
@@ -64,6 +62,32 @@ else:
         
     del ciudades[""] # Eliminamos aquellos casos en los que no esté especificada la ciudad del paciente.
     del trabajo[""] # Eliminamos aquellos casos en los que no esté especificado el trabajo del paciente.
+
+    # A parir de ahora, las variables que vamos a analizar las guardaremos en diccionarios que tienen rangos (Ej. de 60 a 70 años va a ser una entrada del diccionario "edades").
+    # Por lo tanto, para determinar estos rangos vamos a tener que calcular el mínimo y máximo de estas variables.
+
+    valores = [paciente["Edad"] for paciente in pacientes] # Aquí guardamos una lista con todas las edades de los pacientes.
+    valores[:] = (valor for valor in valores if valor != "None") # Eliminamos todas las edades desconocidas, que en nuestro archivo .csv están marcadas como "None".
+    edad_min = int(min(valores))
+    edad_max = int(max(valores))
+
+    # Quiero hacer 5 rangos.
+    rango = (edad_max - edad_min)//5
+    x = edad_min
+    keys = [] # Creamos una lista vacía con los rangos.
+
+    for i in range(5): # En este bucle creamos los rangos de edades.
+        key = str(x) + "-" + str(x+rango)
+        x = x + rango
+        keys.append(key)
+
+    values = [0, 0, 0, 0, 0] # Lista del número de pacientes por rango (ponemos 5 ceros al haber establecido que queremos 5 rangos).
+
+    for valor in valores: # Bucle que estudia la edad de cada paciente
+        for i in range(5):
+            if int(valor) < (edad_min + (i + 1)*rango):
+                values[i] = values[i] + 1
+                break
 
     # Vamos a realizar las gráficas de barras con los datos analizados hasta ahora.
 
@@ -89,32 +113,9 @@ else:
     plt.title("Relación Paciente - Trabajo") # Título de la gráfica.
     plt.show()
 
-    # A parir de ahora, las variables que vamos a analizar las guardaremos en diccionarios que tienen rangos (Ej. de 60 a 70 años va a ser una entrada del diccionario "edades").
-    # Por lo tanto, para determinar estos rangos vamos a tener que calcular el mínimo y máximo de estas variables.
-
-    #valores = [paciente["Edad"] for paciente in pacientes] # Aquí guardamos una lista con todas las edades de los pacientes.
-    #valores[:] = (valor for valor in valores if valor != "None") # Eliminamos todas las edades desconocidas, que en nuestro archivo .csv están marcadas como "None".
-    #edad_min = int(min(valores))
-    #edad_max = int(max(valores))
-
-    # Quiero hacer 5 rangos.
-    #rango = (edad_max - edad_min)//5
-    #x = edad_min
-    #keys = [] # Creamos una lista vacía con los rangos
-
-    #for i in range(5):
-    #    key = "[" + str(x) + "-" + str(x+rango) + "]"
-    #    x = x + rango
-    #    keys.append(key)
-
-    #values = [0, 0, 0, 0, 0]
-
-    #for valor in valores:
-    #    for i in range(5):
-    #        if int(valor) < (edad_min + (i + 1)*rango):
-    #            values[i] = values[i] + 1
-    #            break
-    
-    #print(keys)
-    #print(values)
-    print(n)
+    # 4º Gráfica de barras de los rangos de edades de los pacientes.
+    plt.bar(keys, values, color="orange") # La información que aparecerá en los ejes.
+    plt.ylabel("Número de pacientes") # Título que explica los datos del eje Y.
+    plt.xlabel("Edad") # Título que explica los datos del eje X.
+    plt.title("Relación Paciente - Edades") # Título de la gráfica.
+    plt.show()
