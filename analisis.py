@@ -77,7 +77,7 @@ else:
 
     # 2º Gráfica de barras de las ciudades en relación con los pacientes.
 
-    plt.bar(ciudades.keys(), ciudades.values()) # La información que aparecerá en los ejes.
+    plt.bar(ciudades.keys(), ciudades.values(), color="green") # La información que aparecerá en los ejes.
     plt.xlabel("Tipos de Ciudades") # Título que explica los datos del eje X.
     plt.ylabel("Número de pacientes") # Título que explica los datos del eje Y.
     plt.title("Relación Paciente - Ciudad") # Título de la gráfica.
@@ -85,7 +85,7 @@ else:
 
     # 3º Gráfica de barras de los trabajos en relación con los pacientes.
 
-    plt.barh(list(trabajo.keys()), trabajo.values()) # La información que aparecerá en los ejes.
+    plt.barh(list(trabajo.keys()), trabajo.values(), color="pink") # La información que aparecerá en los ejes.
     plt.ylabel("Trabajos") # Título que explica los datos del eje Y.
     plt.xlabel("Número de pacientes") # Título que explica los datos del eje X.
     plt.title("Relación Paciente - Trabajo") # Título de la gráfica.
