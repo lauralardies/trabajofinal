@@ -82,25 +82,48 @@ else:
 
     valores_edad = [paciente["Edad"] for paciente in pacientes] # Aquí guardamos una lista con todas las edades de los pacientes.
     valores_edad[:] = (valor_edad for valor_edad in valores_edad if valor_edad != "None") # Eliminamos todas las edades desconocidas, que en nuestro archivo .csv están marcadas como "None".
-    edad_min = int(min(valores_edad))
-    edad_max = int(max(valores_edad))
+    edad_min = float(min(valores_edad, key=float))
+    edad_max = float(max(valores_edad, key=float))
 
     # Quiero hacer 5 rangos.
-    rango = (edad_max - edad_min)//5
+    rango_edad = (edad_max - edad_min)//5
     x = edad_min
-    keys = [] # Creamos una lista vacía con los rangos.
+    keys_edad = [] # Creamos una lista vacía con los rangos.
 
     for i in range(5): # En este bucle creamos los rangos de edades.
-        key = str(x) + "-" + str(x+rango)
-        x = x + rango
-        keys.append(key)
+        key = str(x) + "-" + str(x + rango_edad)
+        x = x + rango_edad
+        keys_edad.append(key)
 
-    values = [0, 0, 0, 0, 0] # Lista del número de pacientes por rango (ponemos 5 ceros al haber establecido que queremos 5 rangos).
+    values_edad = [0, 0, 0, 0, 0] # Lista del número de pacientes por rango (ponemos 5 ceros al haber establecido que queremos 5 rangos).
 
     for valor_edad in valores_edad: # Bucle que estudia la edad de cada paciente
         for i in range(5):
-            if int(valor_edad) < (edad_min + (i + 1)*rango):
-                values[i] = values[i] + 1
+            if float(valor_edad) < (edad_min + (i + 1) * rango_edad):
+                values_edad[i] = values_edad[i] + 1
+                break
+
+    valores_educacion = [paciente["Educación"] for paciente in pacientes] # Aquí guardamos una lista con todas las edades de los pacientes.
+    valores_educacion[:] = (valor_educacion for valor_educacion in valores_educacion if valor_educacion != "None") # Eliminamos todas las edades desconocidas, que en nuestro archivo .csv están marcadas como "None".
+    educacion_min = float(min(valores_educacion, key=float))
+    educacion_max = float(max(valores_educacion, key=float))
+
+    # Quiero hacer 5 rangos.
+    rango_educacion = (educacion_max - educacion_min)//5
+    y = educacion_min
+    keys_educacion = [] # Creamos una lista vacía con los rangos.
+
+    for i in range(5): # En este bucle creamos los rangos de edades.
+        key = str(y) + "-" + str(y + rango_educacion)
+        y = y + rango_educacion
+        keys_educacion.append(key)
+
+    values_educacion = [0, 0, 0, 0, 0] # Lista del número de pacientes por rango (ponemos 5 ceros al haber establecido que queremos 5 rangos).
+
+    for valor_educacion in valores_educacion: # Bucle que estudia la edad de cada paciente
+        for i in range(5):
+            if float(valor_educacion) < (educacion_min + (i + 1) * rango_educacion):
+                values_educacion[i] = values_educacion[i] + 1
                 break
 
     # ----- G R Á F I C O S -----
@@ -129,7 +152,7 @@ else:
     plt.show()
 
     # 4º Gráfica de barras de los rangos de edades de los pacientes.
-    plt.bar(keys, values, color="orange") # La información que aparecerá en los ejes.
+    plt.bar(keys_edad, values_edad, color="orange") # La información que aparecerá en los ejes.
     plt.xlabel("Edad") # Título que explica los datos del eje X.
     plt.ylabel("Número de pacientes") # Título que explica los datos del eje Y.
     plt.title("Relación Paciente - Edades") # Título de la gráfica.
@@ -140,4 +163,11 @@ else:
     plt.xlabel("Ingresos") # Título que explica los datos del eje X.
     plt.ylabel("Número de pacientes") # Título que explica los datos del eje Y.
     plt.title("Relación Paciente - Ingresos") # Título de la gráfica.
+    plt.show()
+
+    # 6º Gráfica de barras de los rangos de las notas de educación.
+    plt.bar(keys_educacion, values_educacion, color="magenta") # La información que aparecerá en los ejes.
+    plt.xlabel("Educación Puntuación") # Título que explica los datos del eje X.
+    plt.ylabel("Número de pacientes") # Título que explica los datos del eje Y.
+    plt.title("Relación Paciente - Educación") # Título de la gráfica.
     plt.show()
