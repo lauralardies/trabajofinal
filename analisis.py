@@ -137,7 +137,7 @@ def puesto_masvisitado(usuarios):
 
     return stall
 
-def graficas(variable, titulo, horizontal):
+def graficas(variable, titulo, horizontal, saveas):
 
     if horizontal == True: # Con la variable horizontal marco si quiero realizar una gráfica de barras horizontales o verticales.
         plt.barh(list(variable.keys()), variable.values(), color = np.random.rand(3,)) # La información que aparecerá en los ejes.
@@ -148,7 +148,7 @@ def graficas(variable, titulo, horizontal):
         plt.ylabel("Número de pacientes") # Título que explica los datos del eje Y.
 
     plt.title(titulo)
-    plt.show()
+    plt.savefig(("img/" + saveas + ".png"))
 
 # ----- L E C T U R A   D E   A R C H I V O -----
 # Primero analizamos el fichero y creamos una lista de diccionarios.
@@ -181,15 +181,15 @@ usuarios_3 = leer_csv(info_campamento3, var_campamento3, traduccion_var3)
 # Vamos a realizar las gráficas de barras con los datos analizados hasta ahora.
 
 # Datos de pacientes.
-graficas(seguimiento_online(pacientes), "Pacientes y su seguimiento Online de MedCamp", True)
-graficas(tipos_ciudades(pacientes), "¿En qué ciudades viven nuestros pacientes?", False)
-graficas(tipo_trabajo(pacientes), "¿En qué trabajan los pacientes de MedCamp?", True)
-graficas(cantidad_ingresos(pacientes), "Relación Ingresos - Paciente", False)
-graficas(dict_con_rango(pacientes, "Edad", 5), "Edad de los pacientes de MedCamp", False)
-graficas(dict_con_rango(pacientes, "Educación", 5), "Puntuación de la educación recibida por lo pacientes", True)
+graficas(seguimiento_online(pacientes), "Pacientes y su seguimiento Online de MedCamp", True, "Seguimiento Online")
+graficas(tipos_ciudades(pacientes), "¿En qué ciudades viven nuestros pacientes?", False, "Ciudades")
+graficas(tipo_trabajo(pacientes), "¿En qué trabajan los pacientes de MedCamp?", True, "Trabajo")
+graficas(cantidad_ingresos(pacientes), "Relación Ingresos - Paciente", False, "Ingresos")
+graficas(dict_con_rango(pacientes, "Edad", 5), "Edad de los pacientes de MedCamp", False, "Edad")
+graficas(dict_con_rango(pacientes, "Educación", 5), "Puntuación de la educación recibida por lo pacientes", True, "Educacion")
 
 # Datos de campamentos.
-graficas(dict_con_rango(usuarios_1, "Puntuación Salud", 12), "Puntuación de Salud del Primer Campamento de Medcamp", True)
-graficas(dict_con_rango(usuarios_2, "Puntuación Salud", 12), "Puntuación de Salud del Segundo Campamento de Medcamp", True)
-graficas(puntuacion_puestos(usuarios_3), "Número total de puestos visitados por cada paciente en el Tercer Campamento", False)
-graficas(puesto_masvisitado(usuarios_3), "Puesto más visitado como el último puesto de los pacientes", False)
+graficas(dict_con_rango(usuarios_1, "Puntuación Salud", 12), "Puntuación de Salud del Primer Campamento de Medcamp", True, "Puntuación1")
+graficas(dict_con_rango(usuarios_2, "Puntuación Salud", 12), "Puntuación de Salud del Segundo Campamento de Medcamp", True, "Puntuacion2")
+graficas(puntuacion_puestos(usuarios_3), "Número total de puestos visitados por cada paciente en el Tercer Campamento", False, "NumeroStalls")
+graficas(puesto_masvisitado(usuarios_3), "Puesto más visitado como el último puesto de los pacientes", False, "UltimoPuesto")
