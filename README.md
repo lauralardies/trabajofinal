@@ -41,3 +41,6 @@ Para esta fase hemos diseñado un prototipo de nuestra página web en figma, en 
  https://www.figma.com/proto/h0sWHzjpBhrmVRIngSsqdk/trabajo-final?node-id=0%3A1&scaling=scale-down&page-id=0%3A1&starting-point-node-id=2%3A2
 
 ## FASE 2
+En esta fase hemos analizado la información aportada por el dataset que hemos elegido. Hemos analizado estos datos de dos maneras : utilizando la librería pandas y sin utilizarla.
+
+## FASE 3
