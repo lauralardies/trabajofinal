@@ -1,174 +1,146 @@
 import matplotlib.pyplot as plt
+import numpy as np
 
-# ----- L E C T U R A   D E   A R C H I V O -----
-# Primero analizamos el fichero y creamos una lista de diccionarios.
+def leer_csv(archivo, seleccion, traduccion):
 
-try:
-    f = open("health-care analytics\Train\Patient_Profile.csv")
+    try:
+        f = open(archivo)
 
-except FileNotFoundError:
-    print("El fichero no existe.")
+    except FileNotFoundError:
+        print("El fichero no existe.")
 
-else:
-    lineas = f.readlines()
-    f.close()
+    else:
+        lineas = f.readlines()
+        f.close()
 
-    linea = lineas[0].strip()
-    columnas = linea.split(",")
-    seleccion = ["Patient_ID", "Online_Follower", "LinkedIn_Shared", "Twitter_Shared", "Facebook_Shared", "Income", "Education_Score", "Age", "First_Interaction", "City_Type", "Employer_Category"]
-    traduccion = {"Patient_ID":"ID_Paciente", "Online_Follower":"Seguidor_Online", "LinkedIn_Shared":"Comparte_LinkedIn", "Twitter_Shared":"Comparte_Twitter", "Facebook_Shared":"Comparte_Facebook", "Income":"Ingresos", "Education_Score":"Educación", "Age":"Edad", "First_Interaction":"Primera_Iteracción", "City_Type":"Tipo_Ciudad", "Employer_Category":"Categoria_Empleado"}
+        linea = lineas[0].strip()
+        columnas = linea.split(",")
+        
+        datos = []
 
-    pacientes = []
+        for linea in lineas[1:]:
+            dato = {}
+            linea = linea.strip()
+            campos = linea.split(",")
+            for i in range(len(columnas)):
+                if columnas[i] in seleccion:
+                    dato[traduccion[columnas[i]]] = campos[i]
+            datos.append(dato)
 
-    for linea in lineas[1:]:
-        paciente = {}
-        linea = linea.strip()
-        campos = linea.split(",")
-        for i in range(len(columnas)):
-            if columnas[i] in seleccion:
-                paciente[traduccion[columnas[i]]] = campos[i]
-        pacientes.append(paciente)
+        return datos
+    
+def seguimiento_online(pacientes):
 
-    # Ahora analizamos los datos ordenados.
-
-    n = len(pacientes) # Número de pacientes en total.
-
-    # ----- A N Á L I S I S   D E   R E D E S   S O C I A L E S ,   C I U D A D E S,   T R A B A J O   E   I N G R E S O S -----
-
-    m = 0 # Número de pacientes que siguen online a MedCamp.
-    l = 0 # Número de pacientes que siguen en LinkedIn a MedCamp.
-    t = 0 # Número de pacientes que siguen en Twitter a Medcamp.
-    f = 0 # Número de pacientes que siguen en Facebook a Medcamp.
-    ciudades = {} # Diccionario de las ciudades con el número de pacientes que vive en cada una de ellas.
-    trabajo = {} # Diccionario de los trabajos con el número de pacientes que se dedican a ello.
-    ingresos = {} # Diccionario de los ingresos de ccada paciente.
+    online = {"m" : 0, "l" :0, "t" : 0, "f" : 0}
 
     for paciente in pacientes:
-        # Análisis del seguimiento en redes sociales.
         if paciente["Seguidor_Online"] != "0":
-            m = m + 1
+            online["m"] = online["m"] + 1
         if paciente["Comparte_LinkedIn"] != "0":
-            l = l + 1
+            online["l"] = online["l"] + 1
         if paciente["Comparte_Twitter"] != "0":
-            t = t + 1
+            online["t"] = online["t"] + 1
         if paciente["Comparte_Facebook"] != "0":
-            f = f + 1
+            online["f"] = online["f"] + 1
 
-        # Análisis de las ciudades.
+    return online
+
+def tipos_ciudades(pacientes):
+
+    ciudades = {} # Diccionario de las ciudades con el número de pacientes que vive en cada una de ellas.
+
+    for paciente in pacientes:
         if paciente["Tipo_Ciudad"] not in ciudades:
-            ciudades[paciente["Tipo_Ciudad"]] = 1
+                ciudades[paciente["Tipo_Ciudad"]] = 1
         else:
             ciudades[paciente["Tipo_Ciudad"]] = ciudades[paciente["Tipo_Ciudad"]] + 1
 
-        # Análisis de los trabajos.
+    del ciudades[""] # Eliminamos aquellos casos en los que no esté especificada la ciudad del paciente.
+
+    return ciudades
+
+def tipo_trabajo(pacientes):
+
+    trabajo = {} # Diccionario de los trabajos con el número de pacientes que se dedican a ello.
+
+    for paciente in pacientes:
         if paciente["Categoria_Empleado"] not in trabajo:
             trabajo[paciente["Categoria_Empleado"]] = 1
         else:
             trabajo[paciente["Categoria_Empleado"]] = trabajo[paciente["Categoria_Empleado"]] + 1
-        
-        # Análisis de los ingresos.
+
+    del trabajo[""] # Eliminamos aquellos casos en los que no esté especificado el trabajo del paciente.
+
+    return trabajo
+
+def cantidad_ingresos(pacientes):
+
+    ingresos = {} # Diccionario de los ingresos de cada paciente.
+
+    for paciente in pacientes:
         if paciente["Ingresos"] not in ingresos:
             ingresos[paciente["Ingresos"]] = 1
         else:
             ingresos[paciente["Ingresos"]] = ingresos[paciente["Ingresos"]] + 1
-        
-    del ciudades[""] # Eliminamos aquellos casos en los que no esté especificada la ciudad del paciente.
-    del trabajo[""] # Eliminamos aquellos casos en los que no esté especificado el trabajo del paciente.
+
     del ingresos["None"] # Eliminamos aquellos casos en los que no estén especificado los ingresos del paciente.
 
-    # ----- A N Á L I S I S   D E   E D A D E S   Y   E D U C A C I Ó N -----
-    # A parir de ahora, las variables que vamos a analizar las guardaremos en diccionarios que tienen rangos (Ej. de 60 a 70 años va a ser una entrada del diccionario "edades").
-    # Por lo tanto, para determinar estos rangos vamos a tener que calcular el mínimo y máximo de estas variables.
+    return ingresos
 
-    # Análisis edad. 
+def edades_o_educacion(pacientes, variable):
 
-    valores_edad = [paciente["Edad"] for paciente in pacientes] # Aquí guardamos una lista con todas las edades de los pacientes.
-    valores_edad[:] = (valor_edad for valor_edad in valores_edad if valor_edad != "None") # Eliminamos todas las edades desconocidas, que en nuestro archivo .csv están marcadas como "None".
-    edad_min = int(min(valores_edad, key=int))
-    edad_max = int(max(valores_edad, key=int))
-
-    # Análisis educación. 
-
-    valores_educacion = [paciente["Educación"] for paciente in pacientes] # Aquí guardamos una lista demla educación de los pacientes.
-    valores_educacion[:] = (valor_educacion for valor_educacion in valores_educacion if valor_educacion != "None") # Eliminamos todas las educaciones desconocidas, que en nuestro archivo .csv están marcadas como "None".
-    educacion_min = float(min(valores_educacion, key=float))
-    educacion_max = float(max(valores_educacion, key=float))
-
-    # Quiero crear 5 rangos en ambas variables.
-    rango_edad = (edad_max - edad_min)//5
-    x = edad_min
-    keys_edad = [] # Creamos una lista vacía con los rangos.
-
-    rango_educacion = (educacion_max - educacion_min)//5
-    y = educacion_min
-    keys_educacion = [] # Creamos una lista vacía con los rangos.
+    valores = [paciente[variable] for paciente in pacientes] # Aquí guardamos una lista con todos los valores de la variable.
+    valores[:] = (valor for valor in valores if valor != "None") # Eliminamos todas los valores desconocids, que en nuestro archivo .csv están marcadas como "None".
+    # Seguidamente buscamos el máximo y el mínimo para encontrar el rango.
+    valor_min = float(min(valores, key=float))
+    valor_max = float(max(valores, key=float))
+    # Quiero crear 5 rangos de distintos de esta variable. Estos rangos se generan entre el máximo y el mínimo.
+    rango = (valor_max - valor_min)//5
+    x = valor_min
+    keys = [] # Creamos una lista vacía con los rangos.
 
     for i in range(5): # En este bucle creamos los rangos de ambas variables(edad y educación).
-        key_edad = str(x) + "-" + str(x + rango_edad)
-        key_educ = str(y) + "-" + str(y + rango_educacion)
-        y = y + rango_educacion
-        x = x + rango_edad
-        keys_edad.append(key_edad)
-        keys_educacion.append(key_educ)
+        key = str(x) + "-" + str(x + rango)
+        x = x + rango
+        keys.append(key)
 
-    values_edad = [0, 0, 0, 0, 0] # Lista del número de pacientes por rango (ponemos 5 ceros al haber establecido que queremos 5 rangos).
+    values = [0, 0, 0, 0, 0] # Lista del número de pacientes por rango (ponemos 5 ceros al haber establecido que queremos 5 rangos).
 
-    for valor_edad in valores_edad: # Bucle que estudia la edad de cada paciente
+    for valor in valores: # Bucle que estudia la edad de cada paciente
         for i in range(5):
-            if float(valor_edad) < (edad_min + (i + 1) * rango_edad):
-                values_edad[i] = values_edad[i] + 1
+            if float(valor) < (valor_min + (i + 1) * rango):
+                values[i] = values[i] + 1
                 break
 
-    values_educacion = [0, 0, 0, 0, 0] # Lista del número de pacientes por rango (ponemos 5 ceros al haber establecido que queremos 5 rangos).
+    return dict(zip(keys, values))
 
-    for valor_educacion in valores_educacion: # Bucle que estudia la edad de cada paciente
-        for i in range(5):
-            if float(valor_educacion) < (educacion_min + (i + 1) * rango_educacion):
-                values_educacion[i] = values_educacion[i] + 1
-                break
+def graficas(variable, horizontal):
 
-    # ----- G R Á F I C O S -----
-    # Vamos a realizar las gráficas de barras con los datos analizados hasta ahora.
+    if horizontal == True: # Con la variable horizontal marco si quiero realizar una gráfica de barras horizontales o verticales.
+        plt.barh(list(variable.keys()), variable.values(), color = np.random.rand(3,)) # La información que aparecerá en los ejes.
+        plt.xlabel("Número de pacientes") # Título que explica los datos del eje X.
 
-    # 1º Gráfica del seguimiento Online.
-    plt.bar(["Seguidor\n Online", "Comparte en\n LinkedIn", "Comparte en\n Twitter", "Comparte en\n Facebook"], [m, l, t, f]) # La información que aparecerá en los ejes.
-    plt.xlabel("Actividad en las redes sociales") # Título que explica los datos del eje X.
-    plt.ylim(0, (max(m, l, t, f)*1.5)) # Determinamos a nuestro gusto el límite del eje Y.
-    plt.ylabel("Número de pacientes") # Título que explica los datos del eje Y.
-    plt.title("Relación Paciente - Redes Sociales") # Título de la gráfica.
-    plt.show() # Comando que muestra la gráfica.
+    else:
+        plt.bar(variable.keys(), variable.values(), color = np.random.rand(3,)) # La información que aparecerá en los ejes.
+        plt.ylabel("Número de pacientes") # Título que explica los datos del eje Y.
 
-    # 2º Gráfica de barras de las ciudades en relación con los pacientes.
-    plt.bar(ciudades.keys(), ciudades.values(), color="green") # La información que aparecerá en los ejes.
-    plt.xlabel("Tipos de Ciudades") # Título que explica los datos del eje X.
-    plt.ylabel("Número de pacientes") # Título que explica los datos del eje Y.
-    plt.title("Relación Paciente - Ciudad") # Título de la gráfica.
     plt.show()
 
-    # 3º Gráfica de barras (horizontal) de los trabajos en relación con los pacientes.
-    plt.barh(list(trabajo.keys()), trabajo.values(), color="pink") # La información que aparecerá en los ejes.
-    plt.xlabel("Número de pacientes") # Título que explica los datos del eje X.
-    plt.ylabel("Trabajos") # Título que explica los datos del eje Y.
-    plt.title("Relación Paciente - Trabajo") # Título de la gráfica.
-    plt.show()
+# ----- L E C T U R A   D E   A R C H I V O -----
+# Primero analizamos el fichero y creamos una lista de diccionarios.
 
-    # 4º Gráfica de barras de los rangos de edades de los pacientes.
-    plt.bar(keys_edad, values_edad, color="orange") # La información que aparecerá en los ejes.
-    plt.xlabel("Edad") # Título que explica los datos del eje X.
-    plt.ylabel("Número de pacientes") # Título que explica los datos del eje Y.
-    plt.title("Relación Paciente - Edades") # Título de la gráfica.
-    plt.show()
+perfil_paciente = "health-care analytics\Train\Patient_Profile.csv"
+var_paciente = ["Patient_ID", "Online_Follower", "LinkedIn_Shared", "Twitter_Shared", "Facebook_Shared", "Income", "Education_Score", "Age", "First_Interaction", "City_Type", "Employer_Category"]
+traduccion_var = {"Patient_ID":"ID_Paciente", "Online_Follower":"Seguidor_Online", "LinkedIn_Shared":"Comparte_LinkedIn", "Twitter_Shared":"Comparte_Twitter", "Facebook_Shared":"Comparte_Facebook", "Income":"Ingresos", "Education_Score":"Educación", "Age":"Edad", "First_Interaction":"Primera_Iteracción", "City_Type":"Tipo_Ciudad", "Employer_Category":"Categoria_Empleado"}
 
-    # 5º Gráfica de barras de los ingresos de los pacientes.
-    plt.bar(ingresos.keys(), ingresos.values(), color="purple") # La información que aparecerá en los ejes.
-    plt.xlabel("Ingresos") # Título que explica los datos del eje X.
-    plt.ylabel("Número de pacientes") # Título que explica los datos del eje Y.
-    plt.title("Relación Paciente - Ingresos") # Título de la gráfica.
-    plt.show()
+pacientes = leer_csv(perfil_paciente, var_paciente, traduccion_var)
 
-    # 6º Gráfica de barras de los rangos de las notas de educación.
-    plt.bar(keys_educacion, values_educacion, color="magenta") # La información que aparecerá en los ejes.
-    plt.xlabel("Educación Puntuación") # Título que explica los datos del eje X.
-    plt.ylabel("Número de pacientes") # Título que explica los datos del eje Y.
-    plt.title("Relación Paciente - Educación") # Título de la gráfica.
-    plt.show()
+# ----- G R Á F I C O S -----
+# Vamos a realizar las gráficas de barras con los datos analizados hasta ahora.
+
+graficas(seguimiento_online(pacientes), False)
+graficas(tipos_ciudades(pacientes), False)
+graficas(tipo_trabajo(pacientes), True)
+graficas(cantidad_ingresos(pacientes), False)
+graficas(edades_o_educacion(pacientes, "Edad"), False)
+graficas(edades_o_educacion(pacientes, "Educación"), False)
