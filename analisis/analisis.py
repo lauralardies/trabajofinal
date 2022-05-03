@@ -94,21 +94,27 @@ def dict_con_rango(datos, variable, n_rango):
     # Seguidamente buscamos el máximo y el mínimo para encontrar el rango.
     valor_min = float(min(valores, key=float))
     valor_max = float(max(valores, key=float))
+
     # Quiero crear n rangos de distintos de esta variable. Estos rangos se generan entre el máximo y el mínimo.
-    rango = (valor_max - valor_min)/n_rango
+    if (valor_max - valor_min) < 1:
+        k = 100
+    else:
+        k = 1
+
+    rango = (valor_max - valor_min) * k //n_rango
     x = valor_min
     keys = [] # Creamos una lista vacía con los rangos.
 
     for i in range(n_rango): # En este bucle creamos los rangos de ambas variables(edad y educación).
-        key = str(x) + "-" + str(x + rango)
-        x = x + rango
+        key = "{:.2f}".format(x) + "-" + "{:.2f}".format(x + rango/k)
+        x = x + rango/k
         keys.append(key)
 
     values = [0] * n_rango # Lista del número de pacientes por rango (ponemos 5 ceros al haber establecido que queremos 5 rangos).
 
     for valor in valores: # Bucle que estudia la edad de cada paciente
         for i in range(n_rango):
-            if float(valor) < (valor_min + (i + 1) * rango):
+            if float(valor) < (valor_min + (i + 1) * (rango/k)):
                 values[i] = values[i] + 1
                 break
 
@@ -148,7 +154,8 @@ def graficas(variable, titulo, horizontal, saveas):
         plt.ylabel("Número de pacientes") # Título que explica los datos del eje Y.
 
     plt.title(titulo)
-    plt.savefig(("img/" + saveas + ".png"))
+    #plt.savefig("img/" + saveas + ".pdf")
+    plt.show()
 
 # ----- L E C T U R A   D E   A R C H I V O -----
 # Primero analizamos el fichero y creamos una lista de diccionarios.
@@ -193,3 +200,4 @@ graficas(dict_con_rango(usuarios_1, "Puntuación Salud", 12), "Puntuación de Sa
 graficas(dict_con_rango(usuarios_2, "Puntuación Salud", 12), "Puntuación de Salud del Segundo Campamento de Medcamp", True, "Puntuacion2")
 graficas(puntuacion_puestos(usuarios_3), "Número total de puestos visitados por cada paciente en el Tercer Campamento", False, "NumeroStalls")
 graficas(puesto_masvisitado(usuarios_3), "Puesto más visitado como el último puesto de los pacientes", False, "UltimoPuesto")
+
