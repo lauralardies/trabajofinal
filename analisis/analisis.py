@@ -158,6 +158,25 @@ def graficas(variable, titulo, horizontal, saveas):
     #plt.savefig("img/" + saveas + ".pdf")
     plt.show()
 
+def juntar_diccionarios(diccionario):
+    for usuario in diccionario:
+        id = usuario["ID Paciente"]
+        dict = next((paciente for paciente in pacientes if paciente["ID Paciente"] == id), None)
+        usuario.update(dict)
+
+def limpieza_datos(x, y):
+    indices_borrar = []
+    for i in range(len(x)):
+        if x[i] == "None" or y[i] == "None":
+            indices_borrar.append(i)
+        else:
+            x[i] = float(x[i])
+            y[i] = float(y[i])
+
+    for i in reversed(indices_borrar):
+        x.pop(i)
+        y.pop(i)
+
 # ----- L E C T U R A   D E   A R C H I V O -----
 # Primero analizamos el fichero y creamos una lista de diccionarios.
 
@@ -189,33 +208,34 @@ usuarios_3 = leer_csv(info_campamento3, var_campamento3, traduccion_var3)
 # Vamos a realizar las gráficas de barras con los datos analizados hasta ahora.
 
 # Datos de pacientes.
-#graficas(seguimiento_online(pacientes), "Pacientes y su seguimiento Online de MedCamp", True, "Seguimiento Online")
-#graficas(tipos_ciudades(pacientes), "¿En qué ciudades viven nuestros pacientes?", False, "Ciudades")
-#graficas(tipo_trabajo(pacientes), "¿En qué trabajan los pacientes de MedCamp?", True, "Trabajo")
-#graficas(cantidad_ingresos(pacientes), "Relación Ingresos - Paciente", False, "Ingresos")
-#graficas(dict_con_rango(pacientes, "Edad", 5), "Edad de los pacientes de MedCamp", False, "Edad")
-#graficas(dict_con_rango(pacientes, "Educación", 5), "Puntuación de la educación recibida por lo pacientes", True, "Educacion")
+graficas(seguimiento_online(pacientes), "Pacientes y su seguimiento Online de MedCamp", True, "Seguimiento Online")
+graficas(tipos_ciudades(pacientes), "¿En qué ciudades viven nuestros pacientes?", False, "Ciudades")
+graficas(tipo_trabajo(pacientes), "¿En qué trabajan los pacientes de MedCamp?", True, "Trabajo")
+graficas(cantidad_ingresos(pacientes), "Relación Ingresos - Paciente", False, "Ingresos")
+graficas(dict_con_rango(pacientes, "Edad", 5), "Edad de los pacientes de MedCamp", False, "Edad")
+graficas(dict_con_rango(pacientes, "Educación", 5), "Puntuación de la educación recibida por lo pacientes", True, "Educacion")
 
 # Datos de campamentos.
-#graficas(dict_con_rango(usuarios_1, "Puntuación Salud", 12), "Puntuación de Salud del Primer Campamento de Medcamp", True, "Puntuación1")
-#graficas(dict_con_rango(usuarios_2, "Puntuación Salud", 12), "Puntuación de Salud del Segundo Campamento de Medcamp", True, "Puntuacion2")
-#graficas(puntuacion_puestos(usuarios_3), "Número total de puestos visitados por cada paciente en el Tercer Campamento", False, "NumeroStalls")
-#graficas(puesto_masvisitado(usuarios_3), "Puesto más visitado como el último puesto de los pacientes", False, "UltimoPuesto")
+graficas(dict_con_rango(usuarios_1, "Puntuación Salud", 12), "Puntuación de Salud del Primer Campamento de Medcamp", True, "Puntuación1")
+graficas(dict_con_rango(usuarios_2, "Puntuación Salud", 12), "Puntuación de Salud del Segundo Campamento de Medcamp", True, "Puntuacion2")
+graficas(puntuacion_puestos(usuarios_3), "Número total de puestos visitados por cada paciente en el Tercer Campamento", False, "NumeroStalls")
+graficas(puesto_masvisitado(usuarios_3), "Puesto más visitado como el último puesto de los pacientes", False, "UltimoPuesto")
 
+# Análisis de datos con el cruce de pacientes y campamentos.
 # Ahora queremos comparar datos de archivos diferentes. Para ello, vamos a juntarlos. Vamos a crear una súpertabla.
 # Comenzamos modificando los diccionarios usuarios_1, usuarios_2 y usuarios_3 añadiéndoles la información del paciente que está en el diccionario pacientes.
 
-def juntar_diccionarios(diccionario):
-    for usuario in diccionario:
-        id = usuario["ID Paciente"]
-        dict = next((paciente for paciente in pacientes if paciente["ID Paciente"] == id), None)
-        usuario.update(dict)
-
 juntar_diccionarios(usuarios_1)
-x = [float(dato["Edad"]) for dato in usuarios_1]
-y = [float(dato["Puntuación Salud"]) for dato in usuarios_1]
-#plt.scatter(x, y)
-#plt.show()
+juntar_diccionarios(usuarios_2)
+juntar_diccionarios(usuarios_3)
+
+# Tras estas preparaciones, graficamos.
+
+x = [dato["Edad"] for dato in usuarios_1]
+y = [dato["Puntuación Salud"] for dato in usuarios_1]
+limpieza_datos(x, y)
+plt.scatter(x, y)
+plt.show()
 
 # -----  F I N   A N Á L I S I S   D E   D A T O S   -----
 
