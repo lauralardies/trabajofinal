@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
-from scipy import stats
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error
 
 def leer_csv(archivo, seleccion, traduccion):
 
@@ -164,18 +165,29 @@ def juntar_diccionarios(diccionario):
         dict = next((paciente for paciente in pacientes if paciente["ID Paciente"] == id), None)
         usuario.update(dict)
 
-def limpieza_datos(x, y):
-    indices_borrar = []
-    for i in range(len(x)):
-        if x[i] == "None" or y[i] == "None":
-            indices_borrar.append(i)
+def borrar_datos(x, y):
+    n, m = np.shape(x)
+    filas_borrar = []
+
+    for i in range(n):
+        if y[i] == "None":
+            filas_borrar.append(i)
+            break
         else:
-            x[i] = float(x[i])
             y[i] = float(y[i])
 
-    for i in reversed(indices_borrar):
-        x.pop(i)
-        y.pop(i)
+        for j in range(m):
+            if x[i,j] == "None":
+                filas_borrar.append(i)
+                break
+            else:
+                x[i,j] = float(x[i,j])
+
+    for i in reversed(filas_borrar):
+        x = np.delete(x, i, axis = 0)
+        y = np.delete(y, i, axis = 0)
+
+    return x, y
 
 # ----- L E C T U R A   D E   A R C H I V O -----
 # Primero analizamos el fichero y creamos una lista de diccionarios.
@@ -233,19 +245,72 @@ juntar_diccionarios(usuarios_3)
 
 x = [dato["Edad"] for dato in usuarios_1]
 y = [dato["Puntuación Salud"] for dato in usuarios_1]
-limpieza_datos(x, y)
-plt.scatter(x, y)
+
+n = len(x)
+x = np.reshape(x, (n, 1))
+y = np.reshape(y, (n, 1))
+x, y = borrar_datos(x, y)
+plt.scatter(x[:, 0], y[:, 0])
 plt.show()
 
 # -----  F I N   A N Á L I S I S   D E   D A T O S   -----
 
-slope, intercept, r, p, std_err = stats.linregress(x, y)
+# Vamos a predecir la probabilidad de que el paciente obtenga un resultado favorable, es decir, que termine el campamento con una buena puntuación.
 
-def myfunc(x):
-  return slope * x + intercept
+n = len(usuarios_1)
 
-mymodel = list(map(myfunc, x))
+A = np.array([dato["Edad"] for dato in usuarios_1])
+A = np.reshape(A, (n, 1))
+x = np.array([dato["Educación"] for dato in usuarios_1])
+x = np.reshape(x, (n, 1))
+A = np.append(A, x, axis = 1)
 
-plt.scatter(x, y)
-plt.plot(x, mymodel)
-plt.show()
+x = np.array([dato["Ingresos"] for dato in usuarios_1])
+x = np.reshape(x, (n, 1))
+A = np.append(A, x, axis = 1)
+
+x = np.array([dato["Comparte LinkedIn"] for dato in usuarios_1])
+x = np.reshape(x, (n, 1))
+A = np.append(A, x, axis = 1)
+
+x = np.array([dato["Comparte Twitter"] for dato in usuarios_1])
+x = np.reshape(x, (n, 1))
+A = np.append(A, x, axis = 1)
+
+x = np.array([dato["Comparte Facebook"] for dato in usuarios_1])
+x = np.reshape(x, (n, 1))
+A = np.append(A, x, axis = 1)
+
+x = np.array([dato["Seguidor Online"] for dato in usuarios_1])
+x = np.reshape(x, (n, 1))
+A = np.append(A, x, axis = 1)
+
+A, y = borrar_datos(A, y)
+#plt.scatter(A[:, 0], y[:, 0])
+#plt.show()
+
+#plt.scatter(A[:, 1], y[:, 0])
+#plt.show()
+
+#plt.scatter(A[:, 2], y[:, 0])
+#plt.show()
+
+#plt.scatter(A[:, 3], y[:, 0])
+#plt.show()
+
+#plt.scatter(A[:, 4], y[:, 0])
+#plt.show()
+
+#plt.scatter(A[:, 5], y[:, 0])
+#plt.show()
+
+lin_model = LinearRegression()
+lin_model.fit(A, y)
+
+# Evalua el modelo contra  desviacion media
+y_train_predict = lin_model.predict(A[:10, :])
+rmse = (np.sqrt(mean_squared_error(y[:10, :], y_train_predict)))
+print("El rendimiento del modelo")
+print("--------------------------------------")
+print('El error cuadrático medio es {}'.format(rmse))
+print("\n")
