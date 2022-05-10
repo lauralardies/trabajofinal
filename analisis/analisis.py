@@ -145,20 +145,6 @@ def puesto_masvisitado(usuarios):
 
     return stall
 
-def graficas(variable, titulo, horizontal, saveas):
-
-    if horizontal == True: # Con la variable horizontal marco si quiero realizar una gráfica de barras horizontales o verticales.
-        plt.barh(list(variable.keys()), variable.values(), color = np.random.rand(3,)) # La información que aparecerá en los ejes.
-        plt.xlabel("Número de pacientes") # Título que explica los datos del eje X.
-
-    else:
-        plt.bar(variable.keys(), variable.values(), color = np.random.rand(3,)) # La información que aparecerá en los ejes.
-        plt.ylabel("Número de pacientes") # Título que explica los datos del eje Y.
-
-    plt.title(titulo)
-    #plt.savefig("img/" + saveas + ".pdf")
-    plt.show()
-
 def juntar_diccionarios(diccionario):
     for usuario in diccionario:
         id = usuario["ID Paciente"]
@@ -188,6 +174,34 @@ def borrar_datos(x, y):
         y = np.delete(y, i, axis = 0)
 
     return x, y
+
+def append(append, *matrix):
+    n = len(matrix[0])
+    for m in matrix:
+        m = np.reshape(m, (n, 1))
+    if append == True:
+        matrix2 = matrix.pop(0)
+        for m in matrix2:
+            matrix[0] = np.append(matrix[0], m, axis = 1)
+    
+def diagrama_barras(variable, titulo, horizontal, saveas):
+
+    if horizontal == True: # Con la variable horizontal marco si quiero realizar una gráfica de barras horizontales o verticales.
+        plt.barh(list(variable.keys()), variable.values(), color = np.random.rand(3,)) # La información que aparecerá en los ejes.
+        plt.xlabel("Número de pacientes") # Título que explica los datos del eje X.
+
+    else:
+        plt.bar(variable.keys(), variable.values(), color = np.random.rand(3,)) # La información que aparecerá en los ejes.
+        plt.ylabel("Número de pacientes") # Título que explica los datos del eje Y.
+
+    plt.title(titulo)
+    #plt.savefig("img/" + saveas + ".pdf")
+    plt.show()
+
+def scatter(x, y, columna):
+    x, y = borrar_datos(x, y)
+    plt.scatter(x[:, columna], y[:, 0])
+    plt.show()
 
 # ----- L E C T U R A   D E   A R C H I V O -----
 # Primero analizamos el fichero y creamos una lista de diccionarios.
@@ -220,18 +234,18 @@ usuarios_3 = leer_csv(info_campamento3, var_campamento3, traduccion_var3)
 # Vamos a realizar las gráficas de barras con los datos analizados hasta ahora.
 
 # Datos de pacientes.
-graficas(seguimiento_online(pacientes), "Pacientes y su seguimiento Online de MedCamp", True, "Seguimiento Online")
-graficas(tipos_ciudades(pacientes), "¿En qué ciudades viven nuestros pacientes?", False, "Ciudades")
-graficas(tipo_trabajo(pacientes), "¿En qué trabajan los pacientes de MedCamp?", True, "Trabajo")
-graficas(cantidad_ingresos(pacientes), "Relación Ingresos - Paciente", False, "Ingresos")
-graficas(dict_con_rango(pacientes, "Edad", 5), "Edad de los pacientes de MedCamp", False, "Edad")
-graficas(dict_con_rango(pacientes, "Educación", 5), "Puntuación de la educación recibida por lo pacientes", True, "Educacion")
+diagrama_barras(seguimiento_online(pacientes), "Pacientes y su seguimiento Online de MedCamp", True, "Seguimiento Online")
+diagrama_barras(tipos_ciudades(pacientes), "¿En qué ciudades viven nuestros pacientes?", False, "Ciudades")
+diagrama_barras(tipo_trabajo(pacientes), "¿En qué trabajan los pacientes de MedCamp?", True, "Trabajo")
+diagrama_barras(cantidad_ingresos(pacientes), "Relación Ingresos - Paciente", False, "Ingresos")
+diagrama_barras(dict_con_rango(pacientes, "Edad", 5), "Edad de los pacientes de MedCamp", False, "Edad")
+diagrama_barras(dict_con_rango(pacientes, "Educación", 5), "Puntuación de la educación recibida por lo pacientes", True, "Educacion")
 
 # Datos de campamentos.
-graficas(dict_con_rango(usuarios_1, "Puntuación Salud", 12), "Puntuación de Salud del Primer Campamento de Medcamp", True, "Puntuación1")
-graficas(dict_con_rango(usuarios_2, "Puntuación Salud", 12), "Puntuación de Salud del Segundo Campamento de Medcamp", True, "Puntuacion2")
-graficas(puntuacion_puestos(usuarios_3), "Número total de puestos visitados por cada paciente en el Tercer Campamento", False, "NumeroStalls")
-graficas(puesto_masvisitado(usuarios_3), "Puesto más visitado como el último puesto de los pacientes", False, "UltimoPuesto")
+diagrama_barras(dict_con_rango(usuarios_1, "Puntuación Salud", 12), "Puntuación de Salud del Primer Campamento de Medcamp", True, "Puntuación1")
+diagrama_barras(dict_con_rango(usuarios_2, "Puntuación Salud", 12), "Puntuación de Salud del Segundo Campamento de Medcamp", True, "Puntuacion2")
+diagrama_barras(puntuacion_puestos(usuarios_3), "Número total de puestos visitados por cada paciente en el Tercer Campamento", False, "NumeroStalls")
+diagrama_barras(puesto_masvisitado(usuarios_3), "Puesto más visitado como el último puesto de los pacientes", False, "UltimoPuesto")
 
 # Análisis de datos con el cruce de pacientes y campamentos.
 # Ahora queremos comparar datos de archivos diferentes. Para ello, vamos a juntarlos. Vamos a crear una súpertabla.
@@ -241,73 +255,38 @@ juntar_diccionarios(usuarios_1)
 juntar_diccionarios(usuarios_2)
 juntar_diccionarios(usuarios_3)
 
-# Tras estas preparaciones, graficamos.
+# Tras estas preparaciones, graficamos. Esta vez se dibuja un diagrama de dispersión.
 
 x = [dato["Edad"] for dato in usuarios_1]
 y = [dato["Puntuación Salud"] for dato in usuarios_1]
-
-n = len(x)
-x = np.reshape(x, (n, 1))
-y = np.reshape(y, (n, 1))
-x, y = borrar_datos(x, y)
-plt.scatter(x[:, 0], y[:, 0])
-plt.show()
+append(False, x, y)
+scatter(x, y, 0)
 
 # -----  F I N   A N Á L I S I S   D E   D A T O S   -----
 
 # Vamos a predecir la probabilidad de que el paciente obtenga un resultado favorable, es decir, que termine el campamento con una buena puntuación.
 
-n = len(usuarios_1)
-
 A = np.array([dato["Edad"] for dato in usuarios_1])
-A = np.reshape(A, (n, 1))
 x = np.array([dato["Educación"] for dato in usuarios_1])
-x = np.reshape(x, (n, 1))
-A = np.append(A, x, axis = 1)
+i = np.array([dato["Ingresos"] for dato in usuarios_1])
+z = np.array([dato["Comparte LinkedIn"] for dato in usuarios_1])
+s = np.array([dato["Comparte Twitter"] for dato in usuarios_1])
+r = np.array([dato["Comparte Facebook"] for dato in usuarios_1])
+t = np.array([dato["Seguidor Online"] for dato in usuarios_1])
+append(True, A, x, i, z, s, r, t)
 
-x = np.array([dato["Ingresos"] for dato in usuarios_1])
-x = np.reshape(x, (n, 1))
-A = np.append(A, x, axis = 1)
-
-x = np.array([dato["Comparte LinkedIn"] for dato in usuarios_1])
-x = np.reshape(x, (n, 1))
-A = np.append(A, x, axis = 1)
-
-x = np.array([dato["Comparte Twitter"] for dato in usuarios_1])
-x = np.reshape(x, (n, 1))
-A = np.append(A, x, axis = 1)
-
-x = np.array([dato["Comparte Facebook"] for dato in usuarios_1])
-x = np.reshape(x, (n, 1))
-A = np.append(A, x, axis = 1)
-
-x = np.array([dato["Seguidor Online"] for dato in usuarios_1])
-x = np.reshape(x, (n, 1))
-A = np.append(A, x, axis = 1)
-
-A, y = borrar_datos(A, y)
-#plt.scatter(A[:, 0], y[:, 0])
-#plt.show()
-
-#plt.scatter(A[:, 1], y[:, 0])
-#plt.show()
-
-#plt.scatter(A[:, 2], y[:, 0])
-#plt.show()
-
-#plt.scatter(A[:, 3], y[:, 0])
-#plt.show()
-
-#plt.scatter(A[:, 4], y[:, 0])
-#plt.show()
-
-#plt.scatter(A[:, 5], y[:, 0])
-#plt.show()
+scatter(A, y, 0)
+scatter(A, y, 1)
+scatter(A, y, 2)
+scatter(A, y, 3)
+scatter(A, y, 4)
+scatter(A, y, 5)
+scatter(A, y, 6)
 
 lin_model = LinearRegression()
 lin_model.fit(A, y)
 
-# Evalua el modelo contra  desviacion media
+# Evalua el modelo contra  desviacion media (los 10 primeros valores)
 y_train_predict = lin_model.predict(A[:10, :])
 rmse = (np.sqrt(mean_squared_error(y[:10, :], y_train_predict)))
 print("El rendimiento del modelo")
