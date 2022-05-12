@@ -218,7 +218,7 @@ def diagrama_barras(variable, titulo, horizontal, saveas):
     plt.show()
 
 def scatter(x, columna1, columna2, titulo_x, titulo_y, titulo):
-    plt.scatter(x[:, columna1], x[:, columna2])
+    plt.scatter(list(map(float, x[:, columna1])), list(map(float, x[:, columna2])))
     plt.xlabel(titulo_x)
     plt.ylabel(titulo_y)
     plt.title(titulo)
@@ -292,9 +292,15 @@ c = digitalizar(c)
 y = np.array([dato["Puntuación Salud"] for dato in usuarios_1])
 A = append(A, x, i, z, s, r, t, w, c, y)
 
-#scatter(A, 0, -1, "Edad", "Puntuación de Salud", "Edad vs. Puntuación")
-#scatter(A, 2, -1, "Ingresos", "Puntuación de Salud", "Ingresos vs. Puntuación")
-#scatter(A, 7, -1, "Tipo Ciudad", "Puntuación de Salud", "Ciudad vs. Puntuación")
+scatter(A, 0, -1, "Edad", "Puntuación de Salud", "Edad vs. Puntuación")
+scatter(A, 1, -1, "Educación", "Puntuación de Salud", "Educación vs. Puntuación")
+scatter(A, 2, -1, "Ingresos", "Puntuación de Salud", "Ingresos vs. Puntuación")
+scatter(A, 3, -1, "Comparte LinkedIn", "Puntuación de Salud", "LinkedIn vs. Puntuación")
+scatter(A, 4, -1, "Comparte Twitter", "Puntuación de Salud", "Twitter vs. Puntuación")
+scatter(A, 5, -1, "Comparte Facebook", "Puntuación de Salud", "Facebook vs. Puntuación")
+scatter(A, 6, -1, "Seguidor Online", "Puntuación de Salud", "Seguidor vs. Puntuación")
+scatter(A, 7, -1, "Tipo Ciudad", "Puntuación de Salud", "Ciudad vs. Puntuación")
+scatter(A, 8, -1, "Categoria Empleado", "Puntuación de Salud", "Empleo vs. Puntuación")
 
 # -----  F I N   A N Á L I S I S   D E   D A T O S   -----
 
