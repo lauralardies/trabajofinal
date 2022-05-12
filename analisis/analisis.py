@@ -151,17 +151,11 @@ def juntar_diccionarios(diccionario):
         dict = next((paciente for paciente in pacientes if paciente["ID Paciente"] == id), None)
         usuario.update(dict)
 
-def borrar_datos(x, y):
+def borrar_datos(x):
     n, m = np.shape(x)
     filas_borrar = []
 
     for i in range(n):
-        if y[i] == "None":
-            filas_borrar.append(i)
-            break
-        else:
-            y[i] = float(y[i])
-
         for j in range(m):
             if x[i,j] == "None":
                 filas_borrar.append(i)
@@ -171,18 +165,20 @@ def borrar_datos(x, y):
 
     for i in reversed(filas_borrar):
         x = np.delete(x, i, axis = 0)
-        y = np.delete(y, i, axis = 0)
 
-    return x, y
+    return x
 
-def append(append, *matrix):
-    n = len(matrix[0])
+def append(x, *matrix):
+    n = len(x)
+    x = np.reshape(x, (n, 1))
+
     for m in matrix:
         m = np.reshape(m, (n, 1))
-    if append == True:
-        matrix2 = matrix.pop(0)
-        for m in matrix2:
-            matrix[0] = np.append(matrix[0], m, axis = 1)
+        x = np.append(x, m, axis = 1)
+
+    x = borrar_datos(x)
+    
+    return x
     
 def diagrama_barras(variable, titulo, horizontal, saveas):
 
@@ -198,9 +194,11 @@ def diagrama_barras(variable, titulo, horizontal, saveas):
     #plt.savefig("img/" + saveas + ".pdf")
     plt.show()
 
-def scatter(x, y, columna):
-    x, y = borrar_datos(x, y)
-    plt.scatter(x[:, columna], y[:, 0])
+def scatter(x, columna1, columna2, titulo_x, titulo_y, titulo):
+    plt.scatter(x[:, columna1], x[:, columna2])
+    plt.xlabel(titulo_x)
+    plt.ylabel(titulo_y)
+    plt.title(titulo)
     plt.show()
 
 # ----- L E C T U R A   D E   A R C H I V O -----
@@ -234,18 +232,18 @@ usuarios_3 = leer_csv(info_campamento3, var_campamento3, traduccion_var3)
 # Vamos a realizar las gráficas de barras con los datos analizados hasta ahora.
 
 # Datos de pacientes.
-diagrama_barras(seguimiento_online(pacientes), "Pacientes y su seguimiento Online de MedCamp", True, "Seguimiento Online")
-diagrama_barras(tipos_ciudades(pacientes), "¿En qué ciudades viven nuestros pacientes?", False, "Ciudades")
-diagrama_barras(tipo_trabajo(pacientes), "¿En qué trabajan los pacientes de MedCamp?", True, "Trabajo")
-diagrama_barras(cantidad_ingresos(pacientes), "Relación Ingresos - Paciente", False, "Ingresos")
-diagrama_barras(dict_con_rango(pacientes, "Edad", 5), "Edad de los pacientes de MedCamp", False, "Edad")
-diagrama_barras(dict_con_rango(pacientes, "Educación", 5), "Puntuación de la educación recibida por lo pacientes", True, "Educacion")
+#diagrama_barras(seguimiento_online(pacientes), "Pacientes y su seguimiento Online de MedCamp", True, "Seguimiento Online")
+#diagrama_barras(tipos_ciudades(pacientes), "¿En qué ciudades viven nuestros pacientes?", False, "Ciudades")
+#diagrama_barras(tipo_trabajo(pacientes), "¿En qué trabajan los pacientes de MedCamp?", True, "Trabajo")
+#diagrama_barras(cantidad_ingresos(pacientes), "Relación Ingresos - Paciente", False, "Ingresos")
+#diagrama_barras(dict_con_rango(pacientes, "Edad", 5), "Edad de los pacientes de MedCamp", False, "Edad")
+#diagrama_barras(dict_con_rango(pacientes, "Educación", 5), "Puntuación de la educación recibida por lo pacientes", True, "Educacion")
 
 # Datos de campamentos.
-diagrama_barras(dict_con_rango(usuarios_1, "Puntuación Salud", 12), "Puntuación de Salud del Primer Campamento de Medcamp", True, "Puntuación1")
-diagrama_barras(dict_con_rango(usuarios_2, "Puntuación Salud", 12), "Puntuación de Salud del Segundo Campamento de Medcamp", True, "Puntuacion2")
-diagrama_barras(puntuacion_puestos(usuarios_3), "Número total de puestos visitados por cada paciente en el Tercer Campamento", False, "NumeroStalls")
-diagrama_barras(puesto_masvisitado(usuarios_3), "Puesto más visitado como el último puesto de los pacientes", False, "UltimoPuesto")
+#diagrama_barras(dict_con_rango(usuarios_1, "Puntuación Salud", 12), "Puntuación de Salud del Primer Campamento de Medcamp", True, "Puntuación1")
+#diagrama_barras(dict_con_rango(usuarios_2, "Puntuación Salud", 12), "Puntuación de Salud del Segundo Campamento de Medcamp", True, "Puntuacion2")
+#diagrama_barras(puntuacion_puestos(usuarios_3), "Número total de puestos visitados por cada paciente en el Tercer Campamento", False, "NumeroStalls")
+#diagrama_barras(puesto_masvisitado(usuarios_3), "Puesto más visitado como el último puesto de los pacientes", False, "UltimoPuesto")
 
 # Análisis de datos con el cruce de pacientes y campamentos.
 # Ahora queremos comparar datos de archivos diferentes. Para ello, vamos a juntarlos. Vamos a crear una súpertabla.
@@ -257,15 +255,6 @@ juntar_diccionarios(usuarios_3)
 
 # Tras estas preparaciones, graficamos. Esta vez se dibuja un diagrama de dispersión.
 
-x = [dato["Edad"] for dato in usuarios_1]
-y = [dato["Puntuación Salud"] for dato in usuarios_1]
-append(False, x, y)
-scatter(x, y, 0)
-
-# -----  F I N   A N Á L I S I S   D E   D A T O S   -----
-
-# Vamos a predecir la probabilidad de que el paciente obtenga un resultado favorable, es decir, que termine el campamento con una buena puntuación.
-
 A = np.array([dato["Edad"] for dato in usuarios_1])
 x = np.array([dato["Educación"] for dato in usuarios_1])
 i = np.array([dato["Ingresos"] for dato in usuarios_1])
@@ -273,15 +262,19 @@ z = np.array([dato["Comparte LinkedIn"] for dato in usuarios_1])
 s = np.array([dato["Comparte Twitter"] for dato in usuarios_1])
 r = np.array([dato["Comparte Facebook"] for dato in usuarios_1])
 t = np.array([dato["Seguidor Online"] for dato in usuarios_1])
-append(True, A, x, i, z, s, r, t)
+y = np.array([dato["Puntuación Salud"] for dato in usuarios_1])
+A = append(A, x, i, z, s, r, t, y)
 
-scatter(A, y, 0)
-scatter(A, y, 1)
-scatter(A, y, 2)
-scatter(A, y, 3)
-scatter(A, y, 4)
-scatter(A, y, 5)
-scatter(A, y, 6)
+scatter(A, 0, -1, "Edad", "Puntuación de Salud", "Edad vs. Puntuación")
+scatter(A, 2, -1, "Ingresos", "Puntuación de Salud", "Ingresos vs. Puntuación")
+
+# -----  F I N   A N Á L I S I S   D E   D A T O S   -----
+
+# Vamos a predecir la probabilidad de que el paciente obtenga un resultado favorable, es decir, que termine el campamento con una buena puntuación.
+
+y = A[:, -1]
+y = np.reshape(y, (len(y), 1))
+A = np.delete(A, -1, axis = 1)
 
 lin_model = LinearRegression()
 lin_model.fit(A, y)
