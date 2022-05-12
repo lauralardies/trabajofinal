@@ -179,7 +179,20 @@ def append(x, *matrix):
     x = borrar_datos(x)
     
     return x
+
+def digitalizar(vector):
+    categoria = []
     
+    for v in vector:
+        if v not in categoria:
+            categoria.append(v)
+    
+    for c in categoria:
+        index = categoria.index(c)
+        vector[vector == c] = index
+
+    return vector
+
 def diagrama_barras(variable, titulo, horizontal, saveas):
 
     if horizontal == True: # Con la variable horizontal marco si quiero realizar una gráfica de barras horizontales o verticales.
@@ -262,11 +275,16 @@ z = np.array([dato["Comparte LinkedIn"] for dato in usuarios_1])
 s = np.array([dato["Comparte Twitter"] for dato in usuarios_1])
 r = np.array([dato["Comparte Facebook"] for dato in usuarios_1])
 t = np.array([dato["Seguidor Online"] for dato in usuarios_1])
+w = np.array([dato["Tipo Ciudad"] for dato in usuarios_1])
+w = digitalizar(w)
+c = np.array([dato["Categoria Empleado"] for dato in usuarios_1])
+c = digitalizar(c)
 y = np.array([dato["Puntuación Salud"] for dato in usuarios_1])
-A = append(A, x, i, z, s, r, t, y)
+A = append(A, x, i, z, s, r, t, w, c, y)
 
-scatter(A, 0, -1, "Edad", "Puntuación de Salud", "Edad vs. Puntuación")
-scatter(A, 2, -1, "Ingresos", "Puntuación de Salud", "Ingresos vs. Puntuación")
+#scatter(A, 0, -1, "Edad", "Puntuación de Salud", "Edad vs. Puntuación")
+#scatter(A, 2, -1, "Ingresos", "Puntuación de Salud", "Ingresos vs. Puntuación")
+scatter(A, 7, -1, "Tipo Ciudad", "Puntuación de Salud", "Ciudad vs. Puntuación")
 
 # -----  F I N   A N Á L I S I S   D E   D A T O S   -----
 
@@ -279,10 +297,12 @@ A = np.delete(A, -1, axis = 1)
 lin_model = LinearRegression()
 lin_model.fit(A, y)
 
-# Evalua el modelo contra  desviacion media (los 10 primeros valores)
+# Evalua el modelo contra desviacion media (los 10 primeros valores)
 y_train_predict = lin_model.predict(A[:10, :])
 rmse = (np.sqrt(mean_squared_error(y[:10, :], y_train_predict)))
+
 print("El rendimiento del modelo")
 print("--------------------------------------")
 print('El error cuadrático medio es {}'.format(rmse))
 print("\n")
+
