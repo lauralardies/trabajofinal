@@ -203,6 +203,32 @@ def split(matriz):
 
     return A1, A2
 
+def modelo_y_validacion(A):
+    
+    x_training, x_test = split(A)
+
+    y_training = x_training[:, -1]
+    y_training = np.reshape(y_training, (len(y_training), 1))
+    x_training = np.delete(x_training, -1, axis = 1)
+
+    y_test = x_test[:, -1]
+    y_test = np.reshape(y_test, (len(y_test), 1))
+    x_test = np.delete(x_test, -1, axis = 1)
+
+
+    lin_model = LinearRegression()
+    lin_model.fit(x_training, y_training)
+
+    # Evalua el modelo contra desviacion media (los 10 primeros valores)
+    y_train_predict = lin_model.predict(x_test)
+    rmse = (np.sqrt(mean_squared_error(y_test, y_train_predict)))
+
+    print ("Tamaño de la muestra : " + str(len(y_training)))
+    print("El rendimiento del modelo")
+    print("--------------------------------------")
+    print('El error cuadrático medio es {}'.format(rmse))
+    print("\n")
+
 def diagrama_barras(variable, titulo, horizontal, saveas):
 
     if horizontal == True: # Con la variable horizontal marco si quiero realizar una gráfica de barras horizontales o verticales.
@@ -292,13 +318,13 @@ c = digitalizar(c)
 y = np.array([dato["Puntuación Salud"] for dato in usuarios_1])
 A = append(A, x, i, z, s, r, t, w, c, y)
 
-scatter(A, 0, -1, "Edad", "Puntuación de Salud", "Edad vs. Puntuación")
+#scatter(A, 0, -1, "Edad", "Puntuación de Salud", "Edad vs. Puntuación")
 scatter(A, 1, -1, "Educación", "Puntuación de Salud", "Educación vs. Puntuación")
-scatter(A, 2, -1, "Ingresos", "Puntuación de Salud", "Ingresos vs. Puntuación")
-scatter(A, 3, -1, "Comparte LinkedIn", "Puntuación de Salud", "LinkedIn vs. Puntuación")
-scatter(A, 4, -1, "Comparte Twitter", "Puntuación de Salud", "Twitter vs. Puntuación")
-scatter(A, 5, -1, "Comparte Facebook", "Puntuación de Salud", "Facebook vs. Puntuación")
-scatter(A, 6, -1, "Seguidor Online", "Puntuación de Salud", "Seguidor vs. Puntuación")
+#scatter(A, 2, -1, "Ingresos", "Puntuación de Salud", "Ingresos vs. Puntuación")
+#scatter(A, 3, -1, "Comparte LinkedIn", "Puntuación de Salud", "LinkedIn vs. Puntuación")
+#scatter(A, 4, -1, "Comparte Twitter", "Puntuación de Salud", "Twitter vs. Puntuación")AS
+#scatter(A, 5, -1, "Comparte Facebook", "Puntuación de Salud", "Facebook vs. Puntuación")
+#scatter(A, 6, -1, "Seguidor Online", "Puntuación de Salud", "Seguidor vs. Puntuación")
 scatter(A, 7, -1, "Tipo Ciudad", "Puntuación de Salud", "Ciudad vs. Puntuación")
 scatter(A, 8, -1, "Categoria Empleado", "Puntuación de Salud", "Empleo vs. Puntuación")
 
@@ -311,55 +337,23 @@ scatter(A, 8, -1, "Categoria Empleado", "Puntuación de Salud", "Empleo vs. Punt
 # -----  O V E R F I T T I N G   -----
 # Vamos a modelar con todas las variables disponibles para estimar la predicción que queremos.
 
-x_training, x_test = split(A)
-
-y_training = x_training[:, -1]
-y_training = np.reshape(y_training, (len(y_training), 1))
-x_training = np.delete(x_training, -1, axis = 1)
-
-y_test = x_test[:, -1]
-y_test = np.reshape(y_test, (len(y_test), 1))
-x_test = np.delete(x_test, -1, axis = 1)
-
-
-lin_model = LinearRegression()
-lin_model.fit(x_training, y_training)
-
-# Evalua el modelo contra desviacion media (los 10 primeros valores)
-y_train_predict = lin_model.predict(x_test)
-rmse = (np.sqrt(mean_squared_error(y_test, y_train_predict)))
-
-print("El rendimiento del modelo")
-print("--------------------------------------")
-print('El error cuadrático medio es {}'.format(rmse))
-print("\n")
+modelo_y_validacion(A)
 
 # -----  U N D E R F I T T I N G   -----
-# Vamos a modelar exclusivamente con educación para estimar la predicción que queremos.
+# Vamos a modelar exclusivamente con "Educación" para estimar la predicción que queremos.
 
-A = np.array([dato["Educación"] for dato in usuarios_1])
+A = np.array([dato["Seguidor Online"] for dato in usuarios_1])
 y = np.array([dato["Puntuación Salud"] for dato in usuarios_1])
 A = append(A, y)
 
-x_training, x_test = split(A)
+modelo_y_validacion(A)
 
-y_training = x_training[:, -1]
-y_training = np.reshape(y_training, (len(y_training), 1))
-x_training = np.delete(x_training, -1, axis = 1)
+# Tras estudiar el overfitting (muchos datos) y underfitting (pocos datos), vamos a desarrollar el modelo correcto con las variables adecuadas.
 
-y_test = x_test[:, -1]
-y_test = np.reshape(y_test, (len(y_test), 1))
-x_test = np.delete(x_test, -1, axis = 1)
+A = np.array([dato["Educación"] for dato in usuarios_1])
+c = np.array([dato["Categoria Empleado"] for dato in usuarios_1])
+c = digitalizar(c)
+y = np.array([dato["Puntuación Salud"] for dato in usuarios_1])
+A = append(A, c, y)
 
-
-lin_model = LinearRegression()
-lin_model.fit(x_training, y_training)
-
-# Evalua el modelo contra desviacion media (los 10 primeros valores)
-y_train_predict = lin_model.predict(x_test)
-rmse = (np.sqrt(mean_squared_error(y_test, y_train_predict)))
-
-print("El rendimiento del modelo")
-print("--------------------------------------")
-print('El error cuadrático medio es {}'.format(rmse))
-print("\n")
+modelo_y_validacion(A)
