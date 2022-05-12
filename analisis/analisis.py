@@ -298,7 +298,42 @@ A = append(A, x, i, z, s, r, t, w, c, y)
 
 # -----  F I N   A N Á L I S I S   D E   D A T O S   -----
 
+# -----  M O D E L O   Y   M O D E L O   D E   V A L I D A C I Ó N  -----
+
 # Vamos a predecir la probabilidad de que el paciente obtenga un resultado favorable, es decir, que termine el campamento con una buena puntuación.
+
+# -----  O V E R F I T T I N G   -----
+# Vamos a modelar con todas las variables disponibles para estimar la predicción que queremos.
+
+x_training, x_test = split(A)
+
+y_training = x_training[:, -1]
+y_training = np.reshape(y_training, (len(y_training), 1))
+x_training = np.delete(x_training, -1, axis = 1)
+
+y_test = x_test[:, -1]
+y_test = np.reshape(y_test, (len(y_test), 1))
+x_test = np.delete(x_test, -1, axis = 1)
+
+
+lin_model = LinearRegression()
+lin_model.fit(x_training, y_training)
+
+# Evalua el modelo contra desviacion media (los 10 primeros valores)
+y_train_predict = lin_model.predict(x_test)
+rmse = (np.sqrt(mean_squared_error(y_test, y_train_predict)))
+
+print("El rendimiento del modelo")
+print("--------------------------------------")
+print('El error cuadrático medio es {}'.format(rmse))
+print("\n")
+
+# -----  U N D E R F I T T I N G   -----
+# Vamos a modelar exclusivamente con educación para estimar la predicción que queremos.
+
+A = np.array([dato["Educación"] for dato in usuarios_1])
+y = np.array([dato["Puntuación Salud"] for dato in usuarios_1])
+A = append(A, y)
 
 x_training, x_test = split(A)
 
