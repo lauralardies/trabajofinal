@@ -193,6 +193,16 @@ def digitalizar(vector):
 
     return vector
 
+def split(matriz):
+    np.random.shuffle(matriz)
+    n, m = np.shape(matriz)
+    n1 = int(n * 0.75)
+
+    A1 = matriz[:n1, :]
+    A2 = matriz[(n1+ 1):, :]
+
+    return A1, A2
+
 def diagrama_barras(variable, titulo, horizontal, saveas):
 
     if horizontal == True: # Con la variable horizontal marco si quiero realizar una gráfica de barras horizontales o verticales.
@@ -284,25 +294,31 @@ A = append(A, x, i, z, s, r, t, w, c, y)
 
 #scatter(A, 0, -1, "Edad", "Puntuación de Salud", "Edad vs. Puntuación")
 #scatter(A, 2, -1, "Ingresos", "Puntuación de Salud", "Ingresos vs. Puntuación")
-scatter(A, 7, -1, "Tipo Ciudad", "Puntuación de Salud", "Ciudad vs. Puntuación")
+#scatter(A, 7, -1, "Tipo Ciudad", "Puntuación de Salud", "Ciudad vs. Puntuación")
 
 # -----  F I N   A N Á L I S I S   D E   D A T O S   -----
 
 # Vamos a predecir la probabilidad de que el paciente obtenga un resultado favorable, es decir, que termine el campamento con una buena puntuación.
 
-y = A[:, -1]
-y = np.reshape(y, (len(y), 1))
-A = np.delete(A, -1, axis = 1)
+x_training, x_test = split(A)
+
+y_training = x_training[:, -1]
+y_training = np.reshape(y_training, (len(y_training), 1))
+x_training = np.delete(x_training, -1, axis = 1)
+
+y_test = x_test[:, -1]
+y_test = np.reshape(y_test, (len(y_test), 1))
+x_test = np.delete(x_test, -1, axis = 1)
+
 
 lin_model = LinearRegression()
-lin_model.fit(A, y)
+lin_model.fit(x_training, y_training)
 
 # Evalua el modelo contra desviacion media (los 10 primeros valores)
-y_train_predict = lin_model.predict(A[:10, :])
-rmse = (np.sqrt(mean_squared_error(y[:10, :], y_train_predict)))
+y_train_predict = lin_model.predict(x_test)
+rmse = (np.sqrt(mean_squared_error(y_test, y_train_predict)))
 
 print("El rendimiento del modelo")
 print("--------------------------------------")
 print('El error cuadrático medio es {}'.format(rmse))
 print("\n")
-
